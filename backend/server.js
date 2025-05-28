@@ -1,4 +1,3 @@
-// backend/server.js
 const express = require("express");
 const cors = require("cors");
 const dotenv = require("dotenv");
@@ -12,12 +11,9 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Test Route
-app.get("/api/test", (req, res) => {
-  res.json({ message: "Broke Kid backend is working ✅" });
-});
+app.get("/", (req, res) => res.send("API Running"));
+
+app.use("/api/auth", require("./routes/auth"));
 
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
