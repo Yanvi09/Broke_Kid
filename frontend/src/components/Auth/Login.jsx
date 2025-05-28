@@ -1,38 +1,51 @@
 import React, { useState } from "react";
-import axios from "axios";
+import axios from "../../api/axios";
 import { useNavigate } from "react-router-dom";
 
-const Login = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+function Login() {
   const navigate = useNavigate();
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+  });
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post("http://localhost:5000/api/auth/login", { email, password });
-      localStorage.setItem("token", res.data.token);
+      const res = await axios.post("/auth/login", formData);
+      localStorage.setItem("token", res.data.token); // Save JWT
       alert("Login successful!");
-      navigate("/dashboard"); // Next step: build dashboard
-    } catch (err) {
-      alert(err.response?.data?.message || "Login failed");
+      navigate("/dashboard"); // redirect after login
+    } catch (error) {
+      alert("Login failed. Please check your credentials.");
+      console.error(error.response?.data);
     }
   };
 
   return (
     <form onSubmit={handleSubmit}>
       <h2>Login</h2>
-      <div>
-        <label>Email</label>
-        <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
-      </div>
-      <div>
-        <label>Password</label>
-        <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
-      </div>
+      <input
+        type="email"
+        name="email"
+        placeholder="Email"
+        onChange={handleChange}
+        required
+      />
+      <input
+        type="password"
+        name="password"
+        placeholder="Password"
+        onChange={handleChange}
+        required
+      />
       <button type="submit">Login</button>
     </form>
   );
-};
+}
 
 export default Login;
